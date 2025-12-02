@@ -1,13 +1,13 @@
 # RELATÓRIO DE TESTE DE INTRUSÃO (PENTEST)
 
-| **Parâmetro** | **Detalhes** |
-| :--- | :--- |
-| **Cliente** | TechCorp Solutions |
-| **Alvo Principal** | Infraestrutura & Web Host (IP: 98.95.207.28) |
-| **Modalidade** | Black Box (Simulação de Ameaça Externa) |
-| **Data da Execução** | 30/11/2025 |
-| **Autor** | Consultoria de Segurança Ofensiva |
-| **Classificação** | **CONFIDENCIAL** |
+ **Parâmetro** | **Detalhes** 
+ :--- | :--- 
+ **Cliente** : TechCorp Solutions 
+ **Alvo Principal** : Infraestrutura & Web Host (IP: 98.95.207.28) 
+ **Modalidade** : Black Box (Simulação de Ameaça Externa) 
+ **Data da Execução** : 30/11/2025 
+ **Autor** : Consultoria de Segurança Ofensiva 
+ **Classificação** : **CONFIDENCIAL** 
 
 ---
 
