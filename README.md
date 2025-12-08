@@ -1,6 +1,6 @@
 # 🛡️ Portfólio - Formação em Cibersegurança
 
-Este repositório reúne os projetos práticos desenvolvidos ao longo da **Formação em Cibersegurança** oferecida pela escola **Vai na Web** em parceria com a **Kensei Cybersecurity**.
+Este repositório reúne os projetos práticos desenvolvidos ao longo da **Formação em Cibersegurança** oferecida pela escola **[Vai na Web](https://vainaweb.com.br/)** em parceria com a **[Kensei Cybersecurity](https://www.kensei.seg.br/)**.
 
 O objetivo deste portfólio é documentar a evolução técnica através de desafios que simulam cenários reais do mercado de trabalho, abrangendo desde a estruturação de redes seguras até a defesa estratégica e a execução de testes de intrusão ofensivos (Pentest).
 
