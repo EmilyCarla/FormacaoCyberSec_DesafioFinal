@@ -1,172 +1,178 @@
 # RELATÓRIO DE TESTE DE INTRUSÃO (PENTEST)
 
- 
-**Cliente:** TechCorp Solutions  
-**Alvo Principal:** Infraestrutura & Web Host (IP: 98.95.207.28)  
-**Modalidade:** Black Box (Simulação de Ameaça Externa)  
-**Data da Execução:** 30/11/2025  
-**Autor:** Consultoria de Segurança Ofensiva  
+**Cliente:** TechCorp Solutions
+
+**Alvo Principal:** Infraestrutura & Web Host (IP: 98.95.207.28)
+
+**Modalidade:** Black Box (Simulação de Ameaça Externa)
+
+**Data da Execução:** 30/11/2025
+
+**Data da Revisão:** 08/12/2025
+
+**Autor:** Emily Carla
+
 **Classificação:** **CONFIDENCIAL**
 
-
 ---
 
-## 1. Sumário Executivo
+## 1\. Sumário Executivo
 
 ### 1.1 Objetivo
-O presente teste de intrusão teve como objetivo simular um ataque externo (Black Box) contra a infraestrutura da TechCorp Solutions, especificamente o host `98.95.207.28`. O foco foi identificar vulnerabilidades exploráveis que pudessem comprometer a confidencialidade, integridade e disponibilidade dos dados corporativos e obter acesso administrativo ao sistema.
+
+O presente teste de intrusão teve como objetivo simular um ataque cibernético externo (*Black Box*) contra a infraestrutura da **TechCorp Solutions**, especificamente no servidor hospedado em `98.95.207.28`. O foco principal foi identificar vulnerabilidades exploráveis na aplicação web e serviços expostos que pudessem comprometer a confidencialidade e integridade dos dados corporativos.
 
 ### 1.2 Resumo dos Resultados
-A análise identificou um cenário de **Risco Crítico**. A equipa de auditoria obteve êxito no comprometimento total do servidor. A partir de falhas de configuração e injeção na aplicação web, foi possível obter credenciais, realizar movimentação lateral para o sistema operativo via SSH e escalar privilégios para `root`.
 
-**Impactos Chave:**
-* Acesso total à base de dados de clientes.
-* Controlo administrativo do servidor.
-* Exposição de credenciais de serviço em texto claro.
+A avaliação identificou um cenário de **Risco Crítico**. A equipe de auditoria obteve êxito no comprometimento da aplicação web e identificou exposições severas de informações sensíveis. Falhas de configuração e injeção de código permitiram o acesso administrativo não autorizado e o vazamento de credenciais de banco de dados e controle de versão.
+
+**Principais Vetores de Comprometimento:**
+
+- **Web:** Injeção de SQL (SQLi) permitindo *Bypass* de autenticação e Cross-Site Scripting (XSS).
+- **Information Disclosure:** Exposição de arquivos de configuração, backups e credenciais em texto claro.
+- **Infraestrutura:** Serviço FTP configurado com acesso anônimo permitindo listagem de diretórios.
 
 ---
 
-## 2. Metodologia & Escopo
+## 2\. Metodologia & Escopo
 
-### 2.1 Modalidade e Ferramentas
-O teste foi conduzido na modalidade **Black Box** (sem conhecimento prévio), seguindo os padrões **PTES (Penetration Testing Execution Standard)** e **OWASP**.
+### 2.1 Metodologia
+
+O teste foi conduzido seguindo os padrões do **PTES (Penetration Testing Execution Standard)** e **OWASP Top 10**, utilizando a metodologia *Cyber Kill Chain* para estruturar o ataque:
+
+1. **Reconhecimento:** Coleta de informações passiva e ativa para mapear a superfície de ataque.
+2. **Exploração:** Uso de vulnerabilidades identificadas para obter acesso inicial e administrativo.
+3. **Análise de Riscos:** Classificação e documentação dos impactos de negócio.
 
 **Ferramentas Utilizadas (Kali Linux):**
-* **Reconhecimento:** Nmap, WhatWeb, Gobuster.
-* **Exploração Web:** Burp Suite Community, Browser Developer Tools.
-* **Acesso e Força Bruta:** Hydra, Netcat, SSH.
-* **Pós-Exploração:** LinPEAS (simulado), GTFOBins, exploração manual de scripts.
 
-### 2.2 Vetor de Ataque (Cyber Kill Chain)
-1.  **Reconhecimento:** Deteção de portas (21, 2222, 80) e ficheiros sensíveis expostos.
-2.  **Armamento & Entrega:** Criação de payloads SQLi e uso de credenciais expostas no FTP.
-3.  **Exploração:** Bypass de login administrativo e acesso via SSH.
-4.  **Ação no Objetivo:** Escalação de privilégios via script de backup vulnerável e exfiltração de dados.
+- **Reconhecimento:** Nmap, Gobuster, Browser DevTools.
+- **Exploração:** Clientes FTP, Manipulação de requisições HTTP.
 
----
+### 2.2 Escopo
 
-## 3. Registo das Flags Capturadas
-
-Abaixo listam-se os troféus (flags) que comprovam o nível de acesso obtido durante a intrusão.
-
-| Flag | Data da Captura | Descrição do Acesso |
-| :--- | :--- | :--- |
-| **FLAG{r0b0ts_txt_l34k4g3}** | 30/11/2025 | Encontrada dentro do arquivo público robots.txt, juntamente com regras de bloqueio de indexação.. Localizada em `(http://98.95.207.28/robots.txt)`. |
-| **Root Flag** | 30/11/2025 | Obtida após exploração de permissões `sudo` indevidas num script de backup. Localizada em `/root/root.txt`. |
+- **Alvo:** `http://98.95.207.28/`
+- **Serviços:** Web (Porta 80), FTP (Porta 21).
+- **Tipo:** Black Box (sem credenciais ou documentação prévia).
 
 ---
 
-## 4. Detalhamento Técnico das Vulnerabilidades
+## 3\. Registro das Flags Capturadas
+
+Abaixo listam-se as *flags* capturadas durante a intrusão, comprovando o acesso indevido a arquivos e áreas restritas.
+
+| Flag Capturada | Data | Localização/Vetor |
+| --- | --- | --- |
+| **`FLAG{r0b0ts_txt_l34k4g3}`** | 30/11/2025 | Encontrada no arquivo `/robots.txt` durante o reconhecimento inicial. |
+| **`FLAG{b4s!c_s0urc3_c0d3_1nsp3ct10n}`** | 30/11/2025 | Identificada em um comentário HTML no código-fonte da página inicial. |
+| **`FLAG{d4t4b4s3_cr3d3nt14ls_3xp0s3d}`** | 30/11/2025 | Extraída de um backup de configuração exposto em `/config/database.php.txt`. |
+| **`FLAG{sql_1nj3ct10n_m4st3r}`** | 30/11/2025 | Exibida no alerta de segurança do Dashboard após bypass de login via SQL Injection. |
+
+---
+
+## 4\. Detalhamento Técnico das Vulnerabilidades
 
 ### 4.1. Exposição de Dados Sensíveis (Information Disclosure)
-**Severidade:** 🟡 **MÉDIA**
-**CWE:** 200
 
-* **Descrição:** Durante a fase de reconhecimento com `Gobuster`, foram identificados ficheiros de configuração e diretórios que não deveriam estar públicos. O ficheiro `robots.txt` revelava caminhos sensíveis e comentários no código-fonte continham pistas de desenvolvimento.
-* **Evidência Técnica:**
-    * O acesso a `http://98.95.207.28/robots.txt` listou diretórios como `/admin` e `/backup`.
-    * O código-fonte da página principal continha comentários HTML com credenciais de teste esquecidas.
-    * Encontrado repositório `.git` exposto, permitindo a reconstrução de código-fonte.
-* **Impacto:** Permite a um atacante mapear a estrutura interna da aplicação e obter potenciais credenciais para ataques futuros.
+**Severidade:** 🟡 **MÉDIA** | **CWE:** 200
 
-### 4.2. Injeção de SQL (SQL Injection) - Bypass de Autenticação
-**Severidade:** 🔴 **CRÍTICA**
-**CWE:** 89
+Durante a fase de reconhecimento, foram identificados diversos arquivos sensíveis expostos publicamente no servidor web. O arquivo `robots.txt` revelou diretórios de backup e administração, além de conter a primeira flag. Adicionalmente, comentários no código-fonte e backups de arquivos de configuração (`database.php.txt`) expuseram credenciais de banco de dados em texto claro.
 
-* **Descrição:** O formulário de login administrativo não sanitiza corretamente a entrada de dados. Foi possível manipular a consulta SQL para autenticar sem uma senha válida.
-* **Evidência Técnica:**
-    * **Payload utilizado:** `' OR '1'='1` no campo de utilizador.
-    * **Resultado:** A aplicação redirecionou o atacante para o painel administrativo (`/dashboard.php`) com permissões de administrador, ignorando a verificação de senha.
-* **Impacto:** Acesso total à interface de gestão da aplicação web, permitindo a visualização e modificação de dados de utilizadores.
+**Evidências:**
 
-### 4.3. Cross-Site Scripting (Reflected XSS)
-**Severidade:** 🟠 **ALTA**
-**CWE:** 79
 
-* **Descrição:** O campo de busca da aplicação reflete o input do utilizador diretamente na resposta HTML sem codificação (encoding) adequada.
-* **Evidência Técnica:**
-    * **Payload:** `<script>alert(1)</script>` inserido na barra de pesquisa.
-    * **Resultado:** O navegador executou o script JavaScript arbitrário ao carregar a página de resultados.
-* **Impacto:** Possibilidade de roubo de cookies de sessão de administradores ou redirecionamento de utilizadores para sites maliciosos.
+> **Análise do Robots.txt:**
+> 
+> ![Arquivo robots.txt revelando caminhos e flag](EvidenciasVisuais_DesafioModulo3/Flag1_Robots.png)
+>
+> *Figura 1: Arquivo robots.txt expondo diretórios sensíveis.*
 
-### 4.4. Configuração Insegura de FTP (Acesso Anónimo e Credenciais em Claro)
-**Severidade:** 🔴 **CRÍTICA**
-**CWE:** 287
 
-* **Descrição:** O serviço FTP (porta 21) estava configurado para permitir logins anónimos (`anonymous`). Dentro do diretório raiz, encontrou-se um ficheiro crítico esquecido.
-* **Evidência Técnica:**
-    * Conexão realizada: `ftp 98.95.207.28` -> User: `anonymous` -> Pass: (vazio).
-    * Conteúdo encontrado: Ficheiro `passwords.txt` contendo credenciais de sistema em texto claro.
-* **Impacto:** As credenciais obtidas permitiram a movimentação lateral para o serviço SSH, elevando o ataque de nível web para nível de infraestrutura.
+> **Comentários no Código Fonte:**
+>
+> ![Comentário HTML com flag](EvidenciasVisuais_DesafioModulo3/Flag2_CodFonte.png)
+>
+> *Figura 2: Desenvolvedor deixou credenciais e flag em comentário HTML.*
 
-### 4.5. Escalação de Privilégios via Script Vulnerável
-**Severidade:** 🔴 **CRÍTICA**
-**CWE:** 269
+>
+> **Backup de Banco de Dados Exposto:**
+>
+> ![Arquivo de configuração de banco de dados](EvidenciasVisuais_DesafioModulo3/Flag3_BD.png)
+>
+> *Figura 3: Arquivo .php.txt revelando usuário e senha do banco.*
 
-* **Descrição:** Após o acesso SSH (porta 2222) com as credenciais do FTP, a enumeração do sistema revelou que o utilizador atual possuía permissão `sudo` para executar um script de backup específico sem senha. O script continha vulnerabilidades que permitiram a execução de comandos arbitrários ou leitura de ficheiros protegidos.
-* **Evidência Técnica:**
-    * Comando `sudo -l` listou `(root) NOPASSWD: /usr/local/bin/backup_script.sh`.
-    * Análise do script revelou uso inseguro de credenciais de base de dados ou manipulação de ficheiros.
-    * Exploração permitiu obter uma shell como `root` ou ler a flag em `/root/root.txt`.
-* **Impacto:** Comprometimento total do servidor, permitindo persistência, destruição de logs e acesso irrestrito a todos os dados.
+### 4.2. Injeção de SQL (SQL Injection) - Authentication Bypass
 
----
+**Severidade:** 🔴 **CRÍTICA** | **CWE:** 89
 
-## 5. Análise SWOT de Segurança
+O formulário de login administrativo não implementa sanitização adequada de entrada. Foi possível manipular a consulta SQL no campo de usuário para burlar o mecanismo de autenticação, permitindo o acesso à área administrativa (`/dashboard.php`) sem o conhecimento da senha legítima. O sistema confirmou a invasão exibindo um alerta com o token de sessão comprometido.
 
-Com base nos achados, apresenta-se a análise estratégica do ambiente da TechCorp:
+**Evidência:**
+>
+![Código fonte vulnerável a XSS](EvidenciasVisuais_DesafioModulo3/Flag6_PopUpXSS.png)
+>*Figura 4: Execução de script malicioso (alert) comprovando a falha.*
 
-* **Forças (Strengths):**
-    * Uso de porta não-padrão para SSH (2222), o que evita scans automatizados superficiais (embora ineficaz contra scans completos).
-    * Existência de scripts de backup (indica preocupação com disponibilidade, apesar da implementação insegura).
+### 4.3. Cross-Site Scripting (XSS) Refletido
 
-* **Fraquezas (Weaknesses):**
-    * Falta de validação de input na aplicação web (SQLi/XSS).
-    * Gestão de segredos deficiente (credenciais em ficheiros de texto no FTP).
-    * Permissões de `sudo` excessivamente permissivas.
-    * Exposição de ficheiros de desenvolvimento/controle de versão em produção.
+**Severidade:** 🟠 **ALTA** | **CWE:** 79
 
-* **Oportunidades (Opportunities):**
-    * Implementação de um pipeline CI/CD seguro para evitar arquivos `.git` em produção.
-    * Adoção de cofres de senhas (Vaults) para eliminar credenciais hardcoded.
-    * Formação da equipa de desenvolvimento em Secure Coding (OWASP).
+O campo de pesquisa do sistema reflete a entrada do usuário sem a devida codificação de saída. Testes demonstraram que é possível injetar scripts maliciosos (payloads JavaScript) que são executados no navegador da vítima. Isso pode levar ao roubo de cookies de sessão e sequestro de contas.
 
-* **Ameaças (Threats):**
-    * Ataques automatizados de Ransomware utilizando o acesso administrativo obtido.
-    * Exfiltração de base de dados para venda em mercados ilegais.
-    * Uso do servidor como parte de uma botnet.
+**Evidência:**
+>
+![Popup confirmando XSS](EvidenciasVisuais_DesafioModulo3/Flag4_XSS.png)
+>*Figura 5:Inspeção do código mostrando a falta de sanitização no input de busca. *
+>
+
+### 4.4. Configuração Insegura de FTP (Acesso Anônimo)
+
+**Severidade:** 🟠 **ALTA** | **CWE:** 287
+
+O serviço FTP (Porta 21) permite conexões anônimas sem a necessidade de senha. A exploração permitiu a listagem de diretórios internos e a identificação de pastas críticas como `/confidential` e arquivos de configuração, ampliando a superfície de ataque para possíveis exfiltrações de dados.
+
+**Evidência:**
+>
+![Acesso FTP Anônimo](EvidenciasVisuais_DesafioModulo3/Flag5_ListagemFTP.png)
+
+>*Figura 6: Terminal demonstrando login como 'anonymous' e listagem de arquivos sensíveis.*
 
 ---
 
-## 6. Conclusão Geral
+## 5\. Análise SWOT de Segurança
 
-A maturidade de segurança da TechCorp Solutions encontra-se num estágio **inicial/reativo**. As vulnerabilidades encontradas são clássicas e de fácil exploração, indicando a ausência de processos de revisão de código e hardening de servidores.
+| **Forças (Strengths)** | **Fraquezas (Weaknesses)** |
+| --- | --- |
+| • Implementação de mecanismos de alerta de intrusão no Dashboard.<br>• Estrutura de diretórios organizada (embora exposta). | • Falta de validação de input (SQLi/XSS).<br>• Exposição de arquivos de configuração e backups.<br>• Armazenamento de credenciais em texto claro no código.<br>• FTP configurado com acesso anônimo. |
 
-A combinação de falhas Web (SQLi) com falhas de Infraestrutura (FTP inseguro/PrivEsc) permitiu uma "Kill Chain" completa. Num cenário real, isto resultaria em perda total de confidencialidade dos dados dos clientes e danos reputacionais severos.
+| **Oportunidades (Opportunities)** | **Ameaças (Threats)** |
+| --- | --- |
+| • Implementação de WAF para mitigar injeções.<br>• Adoção de ferramentas de SAST/DAST no pipeline.<br>• Treinamento de desenvolvimento seguro. | • Vazamento total da base de dados de clientes.<br>• Comprometimento completo do servidor via credenciais vazadas.<br>• Danos reputacionais severos. |
 
 ---
 
-## 7. Recomendações Técnicas
+## 6\. Conclusão Geral
+
+A maturidade de segurança da TechCorp Solutions encontra-se em um estágio **inicial**. As vulnerabilidades encontradas são críticas e de fácil exploração, indicando falhas graves nos processos de desenvolvimento seguro e configuração de servidores. A presença de credenciais em texto claro e falhas de injeção expõe a organização a riscos iminentes de vazamento de dados e comprometimento total da infraestrutura.
+
+---
+
+## 7\. Recomendações Técnicas
 
 Recomenda-se a implementação imediata das seguintes ações corretivas:
 
-1.  **Correção de Código (Imediato):**
-    * Utilizar **Prepared Statements** (PDO) em todas as consultas à base de dados para mitigar SQL Injection.
-    * Implementar codificação de saída (HTML Entity Encoding) para prevenir XSS.
-
-2.  **Hardening de Infraestrutura (Curto Prazo):**
-    * Desativar o acesso anónimo no servidor FTP ou substituí-lo por SFTP (SSH File Transfer Protocol).
-    * Remover ficheiros sensíveis (`passwords.txt`, `.git`, `.bak`) dos diretórios públicos.
-    * Restringir o acesso SSH apenas a chaves públicas (desativar autenticação por senha).
-
-3.  **Gestão de Privilégios (Médio Prazo):**
-    * Revisar as regras do ficheiro `/etc/sudoers`, aplicando o princípio do menor privilégio.
-    * Corrigir scripts de automação para não exporem credenciais ou permitirem injeção de comandos.
-
-4.  **Monitorização:**
-    * Implementar um WAF (Web Application Firewall) para bloquear tentativas de injeção.
-    * Monitorizar logs de acesso para detetar atividades anómalas (ex: múltiplos erros 500 ou logins falhados).
+1. **Sanitização e Código Seguro:**
+    - Implementar *Prepared Statements* (PDO) em todas as consultas SQL para mitigar SQL Injection.
+    - Aplicar codificação de saída (Output Encoding) para prevenir XSS.
+2. **Hardening de Infraestrutura:**
+    - Desabilitar o acesso anônimo ao serviço FTP.
+    - Remover imediatamente arquivos de backup (`.bak`, `.sql`, `.txt`) e diretórios de configuração (`.git`, `/config`) do diretório público web.
+    - Configurar o arquivo `robots.txt` para não revelar caminhos sensíveis.
+3. **Gestão de Segredos:**
+    - Remover todas as credenciais *hardcoded* do código-fonte.
+    - Utilizar variáveis de ambiente ou cofres de senhas para gerenciar credenciais de banco de dados.
 
 ---
+
 **Consultoria de Segurança Ofensiva**
-*Relatório gerado em 30/11/2025*
+>
+**Emily Carla**
